@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photography — Moosa Zafar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #f4f2ec;
+      --text:   #111009;
+      --muted:  #9a9890;
+      --border: #e0ddd5;
+      --serif:  'Cormorant', Georgia, serif;
+      --sans:   'Syne', sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:     #0d0c0a;
+        --text:   #e8e4db;
+        --muted:  #6a6760;
+        --border: #1e1d1a;
+      }
+    }
+
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      animation: fadein 0.6s ease 0.1s forwards;
+    }
+    @keyframes fadein { to { opacity: 1; } }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.75rem 3rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .nav-left { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-home {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-home:hover { color: var(--text); }
+    .nav-sep { color: var(--border); font-size: 1.1rem; }
+    .nav-section {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 400;
+    }
+    .nav-count {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 5rem 3rem 3rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .page-title {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 9vw, 7rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .page-title em { font-style: italic; }
+    .page-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      max-width: 28ch;
+      line-height: 1.65;
+      text-align: right;
+    }
+
+    /* ── GALLERY GRID ── */
+    /*
+      Photos are displayed in a 2-column grid.
+      On mobile they stack to 1 column.
+    */
+    .gallery {
+      padding: 3rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem 2rem;
+    }
+
+    /*
+      ╔═══════════════════════════════════════════════════════════════╗
+      ║  HOW TO ADD A NEW PHOTO:                                      ║
+      ║                                                               ║
+      ║  1. Upload your photo to the /images/ folder in this repo    ║
+      ║  2. Copy the block below (between the dashes)                 ║
+      ║  3. Change the src, alt, title, location and date            ║
+      ║  4. Paste it before or after any existing .photo-item block   ║
+      ╚═══════════════════════════════════════════════════════════════╝
+
+      - - - - - - - - - - - - COPY FROM HERE - - - - - - - - - - - -
+      <div class="photo-item">
+        <div class="photo-frame">
+          <img src="images/YOUR-PHOTO.jpg" alt="A short description of the photo">
+        </div>
+        <div class="photo-meta">
+          <span class="photo-title">Your Photo Title</span>
+          <span class="photo-info">Location · Month Year</span>
+        </div>
+      </div>
+      - - - - - - - - - - - - TO HERE - - - - - - - - - - - - - - - -
+    */
+
+    .photo-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    /* Makes tall photos in the second column feel natural */
+    .photo-item:nth-child(even) { margin-top: 3rem; }
+
+    .photo-frame {
+      overflow: hidden;
+      background: var(--border);
+      position: relative;
+    }
+    .photo-frame img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .photo-frame:hover img { transform: scale(1.02); }
+
+    /* Placeholder shown when no image is uploaded yet */
+    .photo-frame.placeholder {
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      border: 1px dashed var(--border);
+      background: transparent;
+    }
+    .placeholder-hint {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .photo-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .photo-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 400;
+      font-style: italic;
+    }
+    .photo-info {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 1.75rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    footer p { font-size: 0.72rem; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav, .page-header, footer { padding: 1.25rem 1.5rem; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .page-desc { text-align: left; }
+      .gallery { padding: 1.5rem; grid-template-columns: 1fr; gap: 2rem; }
+      .photo-item:nth-child(even) { margin-top: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-left">
+      <a href="https://moosazafar.com" class="nav-home">Moosa Zafar</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-section">Photography</span>
+    </div>
+    <!--
+      EDIT: update the number as you add more photos, e.g. "12 photos"
+    -->
+    <span class="nav-count">— photos</span>
+  </nav>
+
+  <header class="page-header">
+    <h1 class="page-title">Photo<em>graphy</em></h1>
+    <!--
+      EDIT: Change this description to whatever feels right to you
+    -->
+    <p class="page-desc">
+      A personal archive of light and
+      moments. Taken with intention,
+      kept with care.
+    </p>
+  </header>
+
+  <main class="gallery">
+
+    <!--
+      ════════════════════════════════════════════════════
+        YOUR PHOTOS GO HERE
+        Each block below is one photo.
+        Replace the placeholder divs with real images.
+      ════════════════════════════════════════════════════
+    -->
+
+    <!-- Photo 1 — replace with your first real photo -->
+    <div class="photo-item">
+      <div class="photo-frame placeholder">
+        <p class="placeholder-hint">Upload images/photo-01.jpg<br>to your repo then replace<br>this placeholder</p>
+      </div>
+      <!--
+        Once you have a real photo, swap the <div class="photo-frame placeholder">
+        block above with this:
+        <div class="photo-frame">
+          <img src="images/photo-01.jpg" alt="Describe the photo here">
+        </div>
+      -->
+      <div class="photo-meta">
+        <span class="photo-title">Your First Photo</span>
+        <span class="photo-info">Edmonton · April 2026</span>
+      </div>
+    </div>
+
+    <!-- Photo 2 -->
+    <div class="photo-item">
+      <div class="photo-frame placeholder">
+        <p class="placeholder-hint">Upload images/photo-02.jpg<br>to your repo then replace<br>this placeholder</p>
+      </div>
+      <div class="photo-meta">
+        <span class="photo-title">Your Second Photo</span>
+        <span class="photo-info">Location · Month Year</span>
+      </div>
+    </div>
+
+    <!-- Photo 3 -->
+    <div class="photo-item">
+      <div class="photo-frame placeholder">
+        <p class="placeholder-hint">Upload images/photo-03.jpg<br>to your repo then replace<br>this placeholder</p>
+      </div>
+      <div class="photo-meta">
+        <span class="photo-title">Your Third Photo</span>
+        <span class="photo-info">Location · Month Year</span>
+      </div>
+    </div>
+
+    <!-- Photo 4 -->
+    <div class="photo-item">
+      <div class="photo-frame placeholder">
+        <p class="placeholder-hint">Upload images/photo-04.jpg<br>to your repo then replace<br>this placeholder</p>
+      </div>
+      <div class="photo-meta">
+        <span class="photo-title">Your Fourth Photo</span>
+        <span class="photo-info">Location · Month Year</span>
+      </div>
+    </div>
+
+    <!--
+      ADD MORE PHOTOS: Copy a photo-item block above and paste it here.
+      Upload the image file to the /images/ folder in your GitHub repo.
+    -->
+
+  </main>
+
+  <footer>
+    <p>© 2026 Moosa Zafar</p>
+    <p><a href="https://moosazafar.com">moosazafar.com</a></p>
+  </footer>
+
+</body>
+</html>
